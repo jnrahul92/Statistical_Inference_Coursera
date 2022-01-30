@@ -1,0 +1,131 @@
+---
+title: "SI_Project_P2"
+author: "Rahul Jain"
+date: "30/01/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+
+The purpose of this analysis is to analyze Tooth Growth data-set by comparing tooth growth by supplement and dose. Exploratory data analysis on the given data set is the first step and then doing hypothesis tests to compare tooth growth by supp and dose
+
+## Loading the dataset and required libraries
+
+```{r echo=TRUE}
+library(datasets)
+data("ToothGrowth")
+library(ggplot2)
+```
+
+## Exploratory Data Analysis
+
+#### Dimnesions of the data-set
+
+There are 60 observations and 3 variables
+
+```{r echo=TRUE}
+dim(ToothGrowth)
+```
+
+Look at the structure of the data-set
+
+```{r echo=TRUE}
+str(ToothGrowth)
+```
+
+Look at first few rows of the data-set
+
+```{r echo=TRUE}
+head(ToothGrowth)
+```
+
+## Summary of the data-set
+
+```{r echo=TRUE}
+summary(ToothGrowth)
+```
+
+There are 30 observations for both supplement type
+
+#### Boxplots to compare the growth with supplement type and dose
+
+The graph shows that increased dosage is effective in increasing tooth length whereas the results are similar for supplement type
+
+```{r echo=TRUE}
+g <- ggplot(ToothGrowth,aes(x=factor(dose),y=len))
+g + facet_grid(.~supp) + geom_boxplot(aes(fill=supp)) + 
+    labs(x="Dose",y="Tooth Length",
+         title = "Guinea Pig Tooth Length by dosage for each supplement")
+```
+
+
+## Hypothesis Testing
+
+#### 1. Tooth Growth is similar for both supplement types
+
+```{r echo=TRUE}
+t.test(len~supp,data = ToothGrowth)
+```
+
+**Null - Hypothesis - Difference in tooth length for both supplements is 0**
+
+**Alternate Hypothesis - Difference in tooth length for both supplements is not 0**
+
+**From the t-test, I have below observations**
+
+* Mean difference between 2 groups = 3.7
+* t-statistic is 1.9 which is not very high for 55 degrees of freedom
+* p-value is more than 0.05 which means we cannot reject null hypothesis
+* Confidence interval contains 0, hence, we cannot reject null
+
+#### 2. Increase in dosage from 0.5mg to 1mg results in increase in tooth length
+
+```{r echo=TRUE}
+t.test(len~factor(dose),data = subset(ToothGrowth,dose %in% c(0.5,1)))
+```
+
+**Null - Hypothesis - Difference in tooth length for both dosages(0.5 and 1) is 0**
+
+**Alternate Hypothesis - Difference in tooth length for both dosages(0.5 and 1) is not 0**
+
+**From the t-test, I have below observations**
+
+* Mean difference between 2 groups = 9.1
+* t-statistic is -6.45 which is very high for 38 degrees of freedom, 97.5 probability requires t-statistic of around 2.02
+* p-value is very less than 0.05 which means we can reject null hypothesis and accept alternate
+* Confidence interval is very below 0, hence, we can reject null
+
+
+#### 3. Increase in dosage from 1 mg to 2 mg results in increase in tooth length
+
+```{r echo=TRUE}
+t.test(len~factor(dose),data = subset(ToothGrowth,dose %in% c(1,2)))
+```
+
+**Null - Hypothesis - Difference in tooth length for both dosages(1 and 2) is 0**
+
+**Alternate Hypothesis - Difference in tooth length for both dosages (1 and 2) is not 0**
+
+**From the t-test, I have below observations**
+
+* Mean difference between 2 groups = 6.4
+* t-statistic is -4.9 which is very high for 37 degrees of freedom, 97.5 probability requires t-statistic of around 2.02
+* p-value is very less than 0.05 which means we can reject null hypothesis and accept alternate
+* Confidence interval is very below 0, hence, we can reject null
+
+
+## Conclusions and assumptions
+
+**Conclusions**
+
+* Increase in dosage leads to increase in tooth length
+* Both supplements leads to similar increase in tooth length
+
+**Assumptions**
+
+* Tooth length follows normal distribution
+* Other factors have been controlled while doing experiment

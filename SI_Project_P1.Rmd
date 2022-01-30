@@ -1,0 +1,104 @@
+---
+title: "SI_Project_P1"
+author: "Rahul Jain"
+date: "30/01/2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+
+The main purpose of this project is to investigate the exponential distribution and then compare it to the CLT.
+For this analysis we will use lambda as 0.2 and simulate the distribution of averages of 40 exponentials over 
+1000 simulations.
+
+## Library Import
+
+```{r echo=TRUE}
+library(ggplot2)
+```
+
+## Simulations
+
+Simulate the data from exponential distribution
+
+```{r echo=TRUE}
+set.seed(42)
+lambda = 0.2
+nosim = 1000
+count = 40
+
+expData <- matrix(sample(rexp(nosim*count,lambda)),nosim,count)
+expMns <- apply(expData,1,mean)
+```
+
+## Sample Mean Comparison with theoretical Mean
+
+#### Sample Mean Calculation
+
+```{r echo=TRUE}
+paste("Mean of sample means from simulation = ",mean(expMns))
+```
+
+#### Theoretical Mean Calculation
+
+```{r echo=TRUE}
+paste("Theoretical Mean = ",1/lambda)
+```
+
+#### Comparison
+
+There is only a small difference between theoretical mean and sample mean
+
+```{r echo=TRUE}
+1/lambda - mean(expMns)
+```
+
+
+## Sample Variance Comparison with theoretical variance
+
+#### Sample Variance Calculation
+
+```{r echo=TRUE}
+paste("Variance of Sample means from simulation = ",var(expMns))
+```
+
+#### Theoretical Variance Calculation
+
+```{r echo=TRUE}
+paste("Theoretical Variance = ",1/((lambda*sqrt(count))^2))
+```
+
+#### Comparison
+
+There is very little difference between theoretical variance and variance of simulated means
+
+```{r echo=TRUE}
+1/((lambda*sqrt(count))^2) - var(expMns)
+```
+
+## Distribution
+
+Distribution of Sample Means from exponential distribution
+
+```{r echo=TRUE}
+xfit <- seq(min(expMns), max(expMns), length=100)
+yfit <- dnorm(xfit, mean=1/lambda, sd=(1/lambda/sqrt(count)))
+hist(expMns,breaks=count,prob=T,col = "green",xlab = "Sample Means",main = "Distribution of Sample Means",ylab="Density")
+lines(xfit,yfit,col="black",lwd=2)
+```
+
+#### Comparison with normal distribution
+
+Quantile plots show that the distribution of Sample Means from exponential distribution is 
+approximately normal
+
+```{r echo=TRUE}
+qqnorm(expMns)
+qqline(expMns,col="red",lwd=2.5)
+```
